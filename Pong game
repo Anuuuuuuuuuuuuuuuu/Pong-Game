@@ -1,0 +1,155 @@
+"""
+Created on Friday Nov 11 2022
+
+@author: Yazeed, Etienne, Anu, and lucan
+Infinite Double Ball Pong
+"""
+from random import choice, random
+from turtle import *
+
+from freegames import vector
+game = True
+def gameover():
+    clear()
+
+def value():
+    """Randomly generate value between (-5, -3) or (3, 5)."""
+    return (3 + random() * 2) * choice([1, -1])
+
+
+ball = vector(0, 0) #Sets ball as a vector with initial values of (0,0)
+ball2 = vector(0,0)
+aim = vector(value(), -1) #Sets a variable aim
+aim2 = vector(value(), -1) #Sets a variable aim
+state = {1: 0, 2: 0}
+
+
+def move(player, change):
+    """Move player position by change."""
+    state[player] += change
+
+
+def rectangle(x, y, width, height):
+    """Draw rectangle at (x, y) with given width and height."""
+    up()
+    goto(x,y) #Sets the spawn point of rectangle to x and y point
+    down()
+    begin_fill()
+    for count in range(2):
+        forward(width)
+        left(90)
+        forward(height)
+        left(90)
+    end_fill()
+
+
+def draw():
+    """Draw game and move pong ball."""
+    clear()
+    rectangle(-200, state[1], 10, 50) #This draws the left paddle
+    rectangle(190, state[2], 10, 50)  # This draws the right paddle
+
+    ball.move(aim)
+    x = ball.x #Sets a variable x to the x coordinate of the ball
+    y = ball.y #Sets a variabley to y coordinate of the ball 
+    up()
+    goto(x, y)
+    dot(10) #This sets the size of the pong ball
+    update()
+    
+    ball2.move(aim2)
+    x = ball2.x #Sets a variable x to the x coordinate of the ball
+    y = ball2.y #Sets a variabley to y coordinate of the ball 
+
+    up()
+    goto(x, y)
+    dot(10, 'black') #This sets the size of the pong ball
+    update()
+
+
+    "FIRST BALL MOVEMENT"
+    if y < -200 or y > 200: #This if statement determines ball movement to bounce 
+         aim.y = -aim.y
+
+    if x < -185: #This if statement determines ball movement to bounce 
+         low = state[1]
+         high = state[1] + 50
+
+         if low <= y <= high:
+             aim.x = -aim.x
+         else:
+             "Respawn the balls"
+             game = False
+             gameover()
+             ball.x = 40
+             ball.y = 40
+             ball2.x = 40
+             ball2.y = 40
+
+    if x > 185: #This if statement determines ball movement to bounce 
+         low = state[2]
+         high = state[2] + 50
+
+         if low <= y <= high:
+            aim.x = -aim.x
+         else:
+            game = False
+            "Respawn the balls"
+            gameover()
+            ball.x = 40
+            ball.y = 40
+            ball2.x = 40
+            ball2.y = 40
+            
+    "SECOND BALL MOVEMENT"
+    if y < -200 or y > 200: #This if statement determines ball movement to bounce 
+               aim2.y = -aim2.y
+
+    if x < -185: #This if statement determines ball movement to bounce 
+               low2 = state[1]
+               high2 = state[1] + 50
+
+               if low2 <= y <= high2:
+                   aim2.x = -aim2.x
+               else: 
+                game = False
+                "Respawn the balls"
+                gameover()
+                ball.x = 40
+                ball.y = 40
+                ball2.x = 40
+                ball2.y = 40
+
+    if x > 185: #This if statement determines ball movement to bounce 
+               low2 = state[2]
+               high2 = state[2] + 50
+
+               if low2 <= y <= high2:
+                   aim2.x = -aim2.x
+               else:
+                 game = False
+                 gameover() #Resets the game
+                 "Respawn the balls"
+                 ball.x = 40 
+                 ball.y = 40
+                 ball2.x = 40
+                 ball2.y = 40
+            
+
+   
+  
+
+
+    ontimer(draw, 50) #The rate at which game is drawn, affects game speed
+
+
+setup(420, 420, 370, 0) #Determines the location of the game window 
+hideturtle()
+tracer(False) #Sets tracer to false
+listen()
+onkey(lambda: move(1, 20), 'w') #This sets the w key to move the left paddle up 
+onkey(lambda: move(1, -20), 's') #This sets the s key to move the left paddle down
+onkey(lambda: move(2, 20), 'i')  #This sets the i key to move the right paddle up
+onkey(lambda: move(2, -20), 'k') #This sets the k key to move the right paddle down
+draw()
+done()
